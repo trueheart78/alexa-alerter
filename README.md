@@ -50,7 +50,13 @@ Alexa skill:
 {
   "intents": [
     {
-      "intent": "TestApp"
+      "intent": "Emergency"
+    },
+    {
+      "intent": "NextTenMinutes"
+    },
+    {
+      "intent": "WakeUp"
     },
     {
       "intent": "AMAZON.YesIntent"
