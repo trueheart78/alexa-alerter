@@ -15,7 +15,7 @@ end
 
 group :development, :test do
   gem 'dotenv', '~> 2.2.1'
-  gem 'rspec', '~> 3.7.1'
+  gem 'rspec', '~> 3.7.0'
   gem 'pry-byebug', '~> 3.6.0'
   gem 'pry-doc', '~> 0.13.3'
   gem 'webmock', '~> 3.3.0'
