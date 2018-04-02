@@ -1,0 +1,51 @@
+{
+  "version": "1.0",
+  "session": {
+    "new": true,
+    "sessionId": "amzn1.echo-api.session.ID",
+    "application": {
+      "applicationId": "amzn1.ask.skill.DIFFERENT_ID"
+    },
+    "user": {
+      "userId": "amzn1.ask.account.ID"
+    }
+  },
+  "context": {
+    "AudioPlayer": {
+      "playerActivity": "IDLE"
+    },
+    "Display": {
+    },
+    "System": {
+      "application": {
+        "applicationId": "amzn1.ask.skill.DIFFERENT_ID"
+      },
+      "user": {
+        "userId": "amzn1.ask.account.ID"
+      },
+      "device": {
+        "deviceId": "amzn1.ask.device.ID",
+        "supportedInterfaces": {
+          "AudioPlayer": {
+          },
+          "Display": {
+            "templateVersion": "1.0",
+            "markupVersion": "1.0"
+          }
+        }
+      },
+      "apiEndpoint": "https://api.amazonalexa.com",
+      "apiAccessToken": "API_ACCESS_TOKEN"
+    }
+  },
+  "request": {
+    "type": "IntentRequest",
+    "requestId": "amzn1.echo-api.request.ID",
+    "timestamp": "2018-04-02T15:02:09Z",
+    "locale": "en-US",
+    "intent": {
+      "name": "InvalidIntent",
+      "confirmationStatus": "NONE"
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "body": {
+    "version": "1.0",
+    "response": {
+      "outputSpeech": {
+        "type": "PlainText",
+        "text": "Okay. I have called and texted Josh."
+      },
+      "shouldEndSession": true
+    }
+  }
+}

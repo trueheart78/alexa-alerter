@@ -6,7 +6,8 @@ Bundler.require :default
 require 'active_support/inflector'
 require 'json'
 require 'logger'
-Dotenv.load 'local.env' unless ENV['RACK_ENV'] == 'production'
+Dotenv.load 'local.env' if ENV['RACK_ENV'] == 'development'
+Dotenv.load 'test.env' if ENV['RACK_ENV'] == 'test'
 
 def development?
   ENV['RACK_ENV'] == 'development'
