@@ -7,6 +7,17 @@ Used the [alexa_rubykit gem][alexa_rubykit] and referenced the
 [TaskRabbit "Developing an Amazon Alexa Skill on Rails" post][taskrabbit] by
 Brian Leonard.
 
+## Environment Variables
+
+* `OUTBOUND_PHONE_NUMBER`: Number you will be contacting, with leading `+`
+* `TWILIO_EMERGENCY_PHONE_NUMBER`: Number you will be calling from when an emergency, with leading `+`
+* `TWILIO_NON_EMERGENT_PHONE_NUMBER`: Number you will be messaging from when a non-emergency, with leading `+`
+* `TWILIO_ASLEEP_PHONE_NUMBER`: Number you will be calling from when asleep, with leading `+`
+* `TWILIO_ACCOUNT_SID`: The account sid for making requests to the Twilio API 
+* `TWILIO_AUTH_TOKEN`: The auth token for making requests to the Twilio API 
+* `RACK_ENV`: `development` or `production`
+* `SKILL_ID`: The id of the skill authorized to access this app.
+
 ## Running the Server
 
 It is designed to be run with `Shotgun`, to enable code reloading
