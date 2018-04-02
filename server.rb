@@ -3,6 +3,7 @@ ENV['RACK_ENV'] = 'development' unless ENV['RACK_ENV']
 require 'rubygems'
 require 'bundler/setup'
 Bundler.require :default
+require 'active_support/inflector'
 require 'json'
 require 'logger'
 Dotenv.load 'local.env' unless ENV['RACK_ENV'] == 'production'
@@ -13,6 +14,10 @@ end
 
 def production?
   ENV['RACK_ENV'] == 'production'
+end
+
+def authorized?(json)
+  return ENV['SKILL_ID'] == json['session']['application']['applicationId']
 end
 
 class Messages
@@ -40,7 +45,7 @@ class Messages
       [
         'Wake up, you may be snoring',
         'Hey, sunshine. Wake up',
-        'I love you, but you need to wake up',
+        'I love you, but you need to wake up'
       ].sample
     end
   end
@@ -52,79 +57,82 @@ class AlexaStatement
   end
 
   def script
-    return scripts[:error] unless twilio_handler.delivered?
-    return scripts[:emergent] if twilio_handler.emergent?
-    return scripts[:woken] if twilio_handler.asleep?
-    scripts[:non_emergent]
+    return responses[:error] unless twilio_handler.delivered?
+    return responses[:emergent] if twilio_handler.emergent?
+    return responses[:woken] if twilio_handler.asleep?
+    responses[:non_emergent]
   end
 
   def self.did_not_understand_script
-    scripts[:wrong_intent]
+    'I did not understand you'
+  end
+
+  def self.youre_not_my_real_parent
+    "You can't make me! You're not my real #{[:mom, :dad].sample}!"
   end
 
   private
 
   attr_reader :twilio_handler
 
-  def scripts
+  def responses
     {
       emergent: 'Okay. I have called and texted Josh.',
       non_emergent: 'Okay. I let him know. Bug him again if he doesn\'t respond in 10 minutes',
       woken: 'Calling that sleeping hubby now',
       error: 'I was unable to get ahold of him. Maybe Siri can help?',
-      wrong_intent: 'I did not understand you'
     }
   end
 end
 
 class TwilioHandler
-  def initialize(intent_name, request_url)
-    @intent_name = intent_name
+  def initialize(intent, request_url)
+    @intent = intent.underscore.to_sym
     @request_url = request_url
     @status = { call: false, message: false }
   end
 
   def delivered?
     return status[:call] && status[:message] if emergent?
+    return status[:message] if non_emergent?
     return status[:call] if asleep?
-    status[:message]
-  end
-
-  def calling?
-    return true if emergent?
     false
   end
 
-  def messaging?
-    true
-  end
-
   def valid?
-    %w(Emergency NextTenMinutes StopSnoring).include? intent_name
+    %i(emergency next_ten_minutes stop_snoring).include? intent
   end
 
   def emergent?
-    intent_name == 'Emergency'
+    intent == :emergency
   end
 
   def non_emergent?
-    intent_name == 'NextTenMinutes'
+    intent == :next_ten_minutes
   end
 
   def asleep?
-    intent_name == 'StopSnoring'
+    intent == :stop_snoring
   end
 
   def make_contact
     return false unless valid?
-    send_message unless asleep?
-    make_phone_call if emergent? || asleep?
+    send_message if message?
+    make_phone_call if call?
     delivered?
   end
 
   private
 
-  attr_reader :intent_name, :status, :request_url
+  attr_reader :intent, :status, :request_url
+
+  def message?
+    emergent? || non_emergent?
+  end
+
+  def call?
+    emergent? || asleep?
+  end
 
   def make_phone_call
     call = twilio_client.api.account.calls.create(
@@ -158,13 +166,17 @@ class TwilioHandler
   end
 
   def emergent_url
-    uri = URI.parse request_url
-    "#{uri.scheme}://#{uri.host}/script"
+    url '/script'
   end
 
   def wake_up_url
-    uri = URI.parse request_url
-    "#{uri.scheme}://#{uri.host}/wake-up"
+    url '/wake-up'
+  end
+
+  def url(path)
+    URI.parse(request_url).tap do |uri|
+      uri.path = path
+    end.to_s
   end
 
   def phone_number
@@ -180,10 +192,6 @@ class TwilioHandler
   def twilio_client
     @twilio_client ||= Twilio::REST::Client.new(ENV['TWILIO_ACCOUNT_SID'], ENV['TWILIO_AUTH_TOKEN'])
   end
-end
-
-get '/' do
-  Faker::Hacker.say_something_smart
 end
 
 post '/script' do
@@ -207,17 +215,39 @@ post '/wake-up' do
 end
 
 post '/help-me' do
-  alexa_input = JSON.parse request.body.read
+  alexa_json = JSON.parse request.body.read
   alexa_response = AlexaRubykit::Response.new
-  if AlexaRubykit.valid_alexa? alexa_input
-    alexa_request = AlexaRubykit.build_request alexa_input
-    if alexa_request.is_a? AlexaRubykit::IntentRequest
-      twilio = TwilioHandler.new(alexa_request.name, request.url)
-      twilio.make_contact
-      alexa_response.add_speech AlexaStatement.new(twilio).script
+  if AlexaRubykit.valid_alexa? alexa_json
+    alexa_request = AlexaRubykit.build_request alexa_json
+    if authorized? alexa_json
+      if alexa_request.is_a? AlexaRubykit::IntentRequest
+        twilio = TwilioHandler.new(alexa_request.name, request.url)
+        twilio.make_contact
+        alexa_response.add_speech AlexaStatement.new(twilio).script
+      end
+    else
+      alexa_response.add_speech AlexaStatement.youre_not_my_real_parent
     end
   else
     alexa_response.add_speech AlexaStatement.did_not_understand_script
   end
   return alexa_response.build_response
+end
+
+if development?
+  get '/wake_up' do
+    content_type 'text/json'
+    return File.read('specs/fixtures/requests/wake_up.json')
+  end
+
+  get '/valid' do
+    json = JSON.parse File.read('specs/fixtures/requests/wake_up.json')
+    content_type 'text/json'
+    return { authorized_skill: authorized?(json) }.to_json
+  end
+end
+
+get '*' do
+  content_type 'text/plain'
+  return Faker::Hacker.say_something_smart
 end

@@ -1,9 +1,15 @@
 GEM
   remote: https://rubygems.org/
   specs:
+    activesupport (5.1.6)
+      concurrent-ruby (~> 1.0, >= 1.0.2)
+      i18n (>= 0.7, < 2)
+      minitest (~> 5.1)
+      tzinfo (~> 1.1)
     alexa_rubykit (1.3.0)
       bundler (~> 1.7)
       rake
+    concurrent-ruby (1.0.5)
     dotenv (2.2.1)
     faker (1.7.3)
       i18n (~> 0.5)
@@ -12,6 +18,7 @@ GEM
     i18n (0.8.1)
     jwt (1.5.6)
     libxml-ruby (3.0.0)
+    minitest (5.11.3)
     multipart-post (2.0.0)
     mustermann (1.0.2)
     puma (3.9.1)
@@ -26,16 +33,20 @@ GEM
       rack (~> 2.0)
       rack-protection (= 2.0.1)
       tilt (~> 2.0)
+    thread_safe (0.3.6)
     tilt (2.0.8)
     twilio-ruby (5.4.2)
       faraday (~> 0.9)
       jwt (~> 1.5)
       libxml-ruby (>= 2.0, < 4.0)
+    tzinfo (1.2.5)
+      thread_safe (~> 0.1)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
+  activesupport
   alexa_rubykit
   dotenv
   faker

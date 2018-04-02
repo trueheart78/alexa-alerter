@@ -3,6 +3,7 @@
 source 'https://rubygems.org'
 
 gem 'alexa_rubykit'
+gem 'activesupport'
 gem 'faker'
 gem 'puma'
 gem 'shotgun'
