@@ -16,7 +16,7 @@ class Messages
         'It\'s not urgent, but I could use your help',
         'Hey. You. Take a break soon, I need something',
         'Got a minute to help me? It\'s not urgent'
-      ]
+      ].sample
     end
 
     def wake_up_message

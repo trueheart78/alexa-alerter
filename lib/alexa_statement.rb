@@ -6,8 +6,9 @@ class AlexaStatement
   def script
     return responses[:error] unless twilio_handler.delivered?
     return responses[:emergent] if twilio_handler.emergent?
+    return responses[:non_emergent] if twilio_handler.non_emergent?
     return responses[:woken] if twilio_handler.asleep?
-    responses[:non_emergent]
+    responses[:unkonwn]
   end
 
   def self.did_not_understand_script
@@ -25,9 +26,10 @@ class AlexaStatement
   def responses
     {
       emergent: 'Okay. I have called and texted Josh.',
-      non_emergent: 'Okay. I let him know. Bug him again if he doesn\'t respond in 10 minutes',
-      woken: 'Calling that sleeping hubby now',
+      non_emergent: 'Okay. I let him know. Bug him again if he doesn\'t respond in 10 minutes.',
+      woken: 'Calling that sleeping hubby now.',
       error: 'I was unable to get ahold of him. Maybe Siri can help?',
+      unknown: 'I was unable to get ahold of him. Maybe Siri can help?',
     }
   end
 end

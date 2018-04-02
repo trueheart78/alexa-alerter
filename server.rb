@@ -4,7 +4,6 @@ require 'rubygems'
 require 'bundler/setup'
 Bundler.require :default
 Bundler.require :development if ENV['RACK_ENV'] == 'development'
-require 'active_support/inflector'
 require 'json'
 require 'logger'
 

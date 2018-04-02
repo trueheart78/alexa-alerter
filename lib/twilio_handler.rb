@@ -1,3 +1,5 @@
+require 'active_support/inflector'
+
 class TwilioHandler
   def initialize(intent, request_url)
     @intent = intent.underscore.to_sym
