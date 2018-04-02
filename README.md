@@ -16,7 +16,7 @@ Brian Leonard.
 * `TWILIO_ACCOUNT_SID`: The account sid for making requests to the Twilio API 
 * `TWILIO_AUTH_TOKEN`: The auth token for making requests to the Twilio API 
 * `RACK_ENV`: `development` or `production`
-* `SKILL_ID`: The id of the skill authorized to access this app.
+* `SKILL_ID`: The `applicationId` of the Amazon Echo skill authorized to access this app.
 
 ## Running the Server
 
