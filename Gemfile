@@ -3,7 +3,7 @@
 source 'https://rubygems.org'
 
 gem 'alexa_rubykit', '~> 1.3.0'
-gem 'activesupport', '~> 5.1.6'
+gem 'activesupport'
 gem 'faker', '~> 1.7.3'
 gem 'sinatra', '~> 2.0.0'
 gem 'twilio-ruby', '~> 5.4.2'
