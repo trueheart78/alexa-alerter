@@ -9,7 +9,7 @@ gem 'sinatra', '~> 2.0.0'
 gem 'twilio-ruby', '~> 5.4.2'
 
 group :development do
-  gem 'puma', '~> 3.9.1'
+  gem 'puma'
   gem 'shotgun', '~> 0.9.2'
 end
 
